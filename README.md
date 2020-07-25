@@ -219,12 +219,11 @@ and the sixth row and eighth column of the console (after reverse processing) is
 where the sunspot falls, and the corresponding points around it are added with corresponding values.
 ![图二](https://cdn.luogu.com.cn/upload/image_hosting/20x5o5yy.png)
 
-那么现在可以分两种ai，一种是进攻类，一种是防守类，两者的区别在于ai的分数和玩家的分数加的多少。
-
- **1.进攻类ai**
+Now, there are two types of AI, one is offensive and the other is defense. The difference between the two is how much the AI score and the player's score are added.
+ **1.offensive**
 
 ```javascript
-//ai 算法
+
 			function computerAI() {
 				var myScore = [];
 	   			var computerScore = [];
@@ -240,7 +239,7 @@ where the sunspot falls, and the corresponding points around it are added with c
 				}
 				for (var i = 0; i < 15; i++) {
 					for (var j = 0; j < 15; j++) {
-//for循环嵌套，遍历棋盘
+//For loop nesting, traversing the chessboard
 						if (chessBoard[i][j] == 0) {
 							for (var k = 0; k < count; k++) {
 								if (wins[i][j][k]) {
@@ -248,14 +247,14 @@ where the sunspot falls, and the corresponding points around it are added with c
 										case 1:
 											myScore[i][j] += 10;
 											break;	
-case 2:
+										case 2:
 											myScore[i][j] += 200;
 											break;
-										//case 3和4只是增加的分数不同，略
+										//Case 3 and case 4 are just different points
 									}
-//ai加分大于myscore，故为攻击型，即case 1中加的分数>10,略
-//判断落子点
-							if (myScore[i][j] > max) {//先看防守
+AI score is greater than myscore, so it is aggressive, i.e. the score added in case 1 is more than 10, slightly
+//Judging the falling point
+							if (myScore[i][j] > max) {//defense first
 								max = myScore[i][j];
 								u = i;
 								v = j;
@@ -265,7 +264,7 @@ case 2:
 									v = j;
 								}
 							}
-							//后看进攻（与防守类似，略
+							//then attack (similar to defense, omitted
 								}
 							}
 						}
@@ -274,14 +273,14 @@ case 2:
 ```
 
 
-**2.防守型**：
+**2.defensive **：
 
-防守型为myscore加分大于ai，故为防守型（代码大致相似，略）
+For defensive type, the bonus of myscore is greater than AI, so it is defensive type (code is roughly similar, slightly
 
 
 
-#### 第十步：
-画白色棋子，检查ai获胜（与玩家代码相似，略）
+#### step 10：
+Draw white pieces and check that AI wins (similar to player code, omitted)
 
 
 ------------
@@ -296,7 +295,7 @@ case 2:
 
 
 ```
-参考资料:   
+Resources:   
 [1]JavaScript - 人工智能 五子棋AI篇
 https://edu.csdn.net/course/detail/8660?
 [2]五子棋AI设计心得
@@ -308,4 +307,7 @@ https://www.jianshu.com/p/b178be0fbec3
 
 ```
 
+Your advice are most welcome
+
+thankyou
 
