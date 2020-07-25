@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Wu Zi Qi -- AI--L2</title>
+		<style type="text/css">
+		</style>
+	</head>
+	<body>
+
+		<script type="text/javascript">
+			document.body.innerHTML = '<canvas id="chess" width="450" height="450"> </canvas>';
+			var chess = document.getElementById('chess');
+			var chessBoard = [];
+			//赢法数组
+			var wins = [];
+			var count = 0;
+			//赢法统计数组
+			var myWin = [];
+			var computerWin = [];
+
+			var context = chess.getContext('2d');
+			//数组显示棋盘
+			for (var i = 0; i < 15; i++) {
+				chessBoard[i] = [];
+				for (var j = 0; j < 15; j++) {
+					chessBoard[i][j] = 0;
+				}
+			}
+
+			//画棋盘
+			for (var i = 0; i < 15; i++) {
+				context.strokeStyle = '#00000';
+				context.beginPath();
+				context.moveTo(15, 15 + i * 30);
+				context.lineTo(435, 15 + i * 30);
+
+				context.moveTo(15 + i * 30, 15);
+				context.lineTo(15 + i * 30, 435);
+				context.stroke();
+			}
+
+			//初始化赢法数组
+			for (var i = 0; i < 15; i++) {
+				wins[i] = [];
+				for (var j = 0; j < 15; j++) {
+					wins[i][j] = [];
+				}
+			}
+			//横向
+			for (var i = 0; i < 15; i++) {
+				for (var j = 0; j < 11; j++) {
+					for (var k = 0; k < 5; k++) {
+						wins[i][j+k][count] = true;
+					}
+					count++;
+				}
+			}
+			//纵向
+			for (var i = 0; i < 11; i++) {
+				for (var j = 0; j < 15; j++) {
+					for (var k = 0; k < 5; k++) {
+						wins[i+k][j][count] = true;
+					}
+					count++;
+				}
+			}
+			//右斜
+			for (var i = 0; i < 11; i++) {
+				for (var j = 0; j < 11; j++) {
+					for (var k = 0; k < 5; k++) {
+						wins[i+k][j+k][count] = true;
+					}
+					count++;
+				}
+			}
+			//左斜
+			for (var i = 14; i >= 4; i--) {
+				for (var j = 0; j < 11; j++) {
+					for (var k = 0; k < 5; k++) {
+						wins[i-k][j+k][count] = true;
+					}
+					count++;
+				}
+			}
+
+			for (var i = 0; i < count; i++) {
+				myWin[i] = 0;
+				computerWin[i] = 0;
+			}
+
+			//画棋子
+			chess.onclick = function(e) {
+				var i = Math.floor(e.offsetX / 30);
+				var j = Math.floor(e.offsetY / 30);
+
+				if (chessBoard[i][j] != 0) {
+					return;
+				}
+
+				context.beginPath();
+				context.arc(15 + i * 30, 15 + j * 30, 13, 0, 2 * Math.PI);
+				var grd = context.createRadialGradient(15 + i * 30, 15 + j * 30, 13, 15 + i * 30 + 2, 15 + j * 30 - 2, 0);
+				grd.addColorStop(0, 'black');
+				grd.addColorStop(1, 'white');
+				context.fillStyle = grd;
+				context.fill();
+				context.stroke();
+
+				chessBoard[i][j] = 1;
+				//检查玩家获胜
+				for (var k = 0; k < count; k++) {
+					if (wins[i][j][k]) {
+						myWin[k]++;
+					}
+					if (myWin[k] == 5) {
+						alert("you win!");
+					}
+
+				}
+				computerAI()
+			}
+			//ai 算法
+			function computerAI() {
+				var myScore = [];
+				var computerScore = [];
+
+				var max = 0;
+				var u = 0, v = 0;
+
+				for (var i = 0; i < 15; i++) {
+					myScore[i] = [];
+					computerScore[i] = [];
+					for (var j = 0; j < 15; j++) {
+						myScore[i][j] = 0;
+						computerScore[i][j] = 0;
+					}
+				}
+
+				for (var i = 0; i < 15; i++) {
+					for (var j = 0; j < 15; j++) {
+						if (chessBoard[i][j] == 0) {
+							for (var k = 0; k < count; k++) {
+
+								if (wins[i][j][k]) {
+									switch(myWin[k]) {
+										case 1:
+											myScore[i][j] += 10;
+											break;
+										case 2:
+											myScore[i][j] += 200;
+											break;
+										case 3:
+											myScore[i][j] += 20000;
+											break;
+										case 4:
+											myScore[i][j] += 2000000;
+											break;
+									}
+
+									switch(computerWin[k]) {
+										case 1:
+											computerScore[i][j] += 20;
+											break;
+										case 2:
+											computerScore[i][j] += 300;
+											break;
+										case 3:
+											computerScore[i][j] += 30000;
+											break;
+										case 4:
+											computerScore[i][j] += 20000000;
+											break;
+									}
+									
+								}
+							}
+							if (myScore[i][j] > max) {//先看防守
+								max = myScore[i][j];
+								u = i;
+								v = j;
+							} else if (myScore[i][j] == max) {
+								if (computerScore[i][j] > computerScore[u][v]) {
+									u = i;
+									v = j;
+								}
+							}
+
+							if (computerScore[i][j] > max) {//后看进攻
+								max = computerScore[i][j];
+								u = i;
+								v = j;
+							} else if (computerScore[i][j] == max) {
+								if (myScore[i][j] > myScore[u][v]) {
+									u = i;
+									v = j;
+								}
+							}
+						}
+					}
+				}
+				//console.log(chessBoard);
+				console.log(computerScore,myScore);
+				context.beginPath();
+				context.arc(15 + u * 30, 15 + v * 30, 13, 0, 2 * Math.PI);
+				var grd = context.createRadialGradient(15 + u * 30, 15 + v * 30, 13, 15 + u * 30 + 2, 15 + v * 30 - 2, 0);
+				grd.addColorStop(0, 'white');
+				grd.addColorStop(1, 'gray');
+				context.fillStyle = grd;
+				context.fill();
+				context.stroke();
+				chessBoard[u][v] = 2;
+
+				for (var k = 0; k < count; k++) {
+					if (wins[u][v][k]) {
+						computerWin[k]++;
+						if (computerWin[k] == 5) {
+							alert("AI win");
+						}
+					}
+				}
+			}
+
+		</script>
+	</body>
+</html>
